@@ -1,0 +1,36 @@
+error: 25-May-22Y 21:08:30: 	service.getAllAdmin is not a function
+error: 25-May-22Y 21:09:58: 	service.getAllAdmin is not a function
+error: 25-May-22Y 21:11:28: 	service.getAllAdmin is not a function
+error: 25-May-22Y 21:11:55: 	service.getAllAdmin is not a function
+error: 25-May-22Y 21:12:07: 	service.getAllAdmin is not a function
+error: 25-May-22Y 21:12:23: 	service.getAllAdminSv is not a function
+error: 25-May-22Y 21:34:17: 	Not found.
+error: 25-May-22Y 21:35:22: 	Not found.
+error: 25-May-22Y 21:36:01: 	Not found.
+error: 25-May-22Y 21:36:17: 	Not found.
+error: 25-May-22Y 21:36:32: 	Not found.
+error: 25-May-22Y 21:38:47: 	Not found.
+error: 25-May-22Y 21:39:37: 	Not found.
+error: 25-May-22Y 21:41:30: 	Not found.
+error: 25-May-22Y 21:43:22: 	Cannot destructure property 'data' of '(intermediate value)' as it is undefined.
+error: 25-May-22Y 21:44:12: 	Cannot destructure property 'data' of '(intermediate value)' as it is undefined.
+error: 25-May-22Y 21:49:13: 	Not found.
+error: 25-May-22Y 21:50:08: 	Not found.
+error: 25-May-22Y 21:56:18: 	Not found.
+error: 25-May-22Y 21:58:34: 	Not found.
+error: 25-May-22Y 21:58:44: 	Not found.
+error: 25-May-22Y 21:59:33: 	Not found.
+error: 25-May-22Y 22:00:15: 	Not found.
+error: 25-May-22Y 22:01:05: 	Not found.
+error: 25-May-22Y 22:02:42: 	Error Prisma
+error: 25-May-22Y 22:03:15: 	Error Prisma
+error: 25-May-22Y 22:03:47: 	Admin not found
+error: 25-May-22Y 22:05:14: 	Admin not found
+error: 25-May-22Y 22:05:47: 	Admin not found
+error: 25-May-22Y 22:06:16: 	Admin not found
+error: 25-May-22Y 22:12:08: 	Admin not found
+error: 25-May-22Y 22:13:38: 	Data not found
+error: 25-May-22Y 22:18:34: 	Data not found: Admin not found
+error: 25-May-22Y 22:19:12: 	Data not found: Admin not found
+error: 25-May-22Y 22:21:45: 	Cannot destructure property 'data' of '(intermediate value)' as it is undefined.
+error: 25-May-22Y 22:24:21: 	message is not defined

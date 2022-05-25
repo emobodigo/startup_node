@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model archelon_access_control {
+  position_id          Int                    @id @default(autoincrement()) @db.UnsignedInt
+  admin_level          Int
+  division_id          Int                    @db.UnsignedInt
+  level_title          String                 @db.VarChar(20)
+  archelon_division    archelon_division      @relation(fields: [division_id], references: [division_id], onDelete: Cascade, map: "archelon_access_control_division_id_foreign")
+  archelon_access_rule archelon_access_rule[]
+  archelon_admin       archelon_admin[]
+
+  @@index([division_id], map: "archelon_access_control_division_id_foreign")
+}
+
+model archelon_access_rule {
+  rule_id                 Int                     @id @default(autoincrement()) @db.UnsignedInt
+  position_id             Int                     @db.UnsignedInt
+  action_id               Int                     @db.UnsignedInt
+  authorized_date         DateTime                @db.DateTime(0)
+  authorizing_admin_id    Int                     @db.UnsignedInt
+  archelon_action         archelon_action         @relation(fields: [action_id], references: [action_id], onDelete: Cascade, map: "archelon_access_rule_action_id_foreign")
+  archelon_admin          archelon_admin          @relation(fields: [authorizing_admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_access_rule_authorizing_admin_id_foreign")
+  archelon_access_control archelon_access_control @relation(fields: [position_id], references: [position_id], onDelete: Cascade, map: "archelon_access_rule_position_id_foreign")
+
+  @@index([action_id], map: "archelon_access_rule_action_id_foreign")
+  @@index([authorizing_admin_id], map: "archelon_access_rule_authorizing_admin_id_foreign")
+  @@index([position_id], map: "archelon_access_rule_position_id_foreign")
+}
+
+model archelon_action {
+  action_id                Int                      @id @default(autoincrement()) @db.UnsignedInt
+  action_name              String                   @db.VarChar(50)
+  action_code              String                   @db.VarChar(10)
+  action_category_id       Int                      @db.UnsignedInt
+  archelon_action_category archelon_action_category @relation(fields: [action_category_id], references: [action_category_id], onDelete: Cascade, onUpdate: Restrict, map: "archelon_action_action_category_id_foreign")
+  archelon_access_rule     archelon_access_rule[]
+  archelon_activity_log    archelon_activity_log[]
+
+  @@index([action_category_id], map: "archelon_action_action_category_id_foreign")
+}
+
+model archelon_action_category {
+  action_category_id Int               @id @default(autoincrement()) @db.UnsignedInt
+  action_category    String            @db.VarChar(50)
+  archelon_action    archelon_action[]
+}
+
+model archelon_activity_log {
+  log_id          Int             @id @default(autoincrement()) @db.UnsignedInt
+  log_date        DateTime        @db.DateTime(0)
+  admin_id        Int             @db.UnsignedInt
+  action_id       Int             @db.UnsignedInt
+  link            String?         @db.Text
+  label           String?         @db.Text
+  target          Int?
+  meta_data       String?         @db.Text
+  archelon_action archelon_action @relation(fields: [action_id], references: [action_id], onDelete: Cascade, map: "archelon_activity_log_action_id_foreign")
+  archelon_admin  archelon_admin  @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_activity_log_admin_id_foreign")
+
+  @@index([action_id], map: "archelon_activity_log_action_id_foreign")
+  @@index([admin_id], map: "archelon_activity_log_admin_id_foreign")
+}
+
+model archelon_admin {
+  admin_id                      Int                             @id @default(autoincrement()) @db.UnsignedInt
+  username                      String                          @db.VarChar(20)
+  admin_fullname                String                          @db.VarChar(100)
+  admin_phone                   String?                         @db.VarChar(20)
+  admin_email                   String?                         @db.VarChar(200)
+  last_active                   DateTime?                       @db.DateTime(0)
+  position_id                   Int                             @db.UnsignedInt
+  password                      String                          @db.VarChar(255)
+  admin_status_id               Int                             @db.UnsignedInt
+  photo_path                    String                          @db.Text
+  created_at                    DateTime?                       @db.Timestamp(0)
+  updated_at                    DateTime?                       @db.Timestamp(0)
+  archelon_admin_status         archelon_admin_status           @relation(fields: [admin_status_id], references: [admin_status_id], onDelete: Cascade, map: "archelon_admin_admin_status_id_foreign")
+  archelon_access_control       archelon_access_control         @relation(fields: [position_id], references: [position_id], onDelete: Cascade, map: "archelon_admin_position_id_foreign")
+  archelon_access_rule          archelon_access_rule[]
+  archelon_activity_log         archelon_activity_log[]
+  archelon_admin_blacklist      archelon_admin_blacklist[]
+  archelon_firebase_token       archelon_firebase_token[]
+  archelon_login_failed_attempt archelon_login_failed_attempt[]
+  archelon_preferences          archelon_preferences[]
+  archelon_rel_admin_shift      archelon_rel_admin_shift[]
+  archelon_session_token        archelon_session_token[]
+
+  @@index([admin_status_id], map: "archelon_admin_admin_status_id_foreign")
+  @@index([position_id], map: "archelon_admin_position_id_foreign")
+}
+
+model archelon_admin_blacklist {
+  blacklist_id   Int             @id @default(autoincrement()) @db.UnsignedInt
+  admin_id       Int?            @db.UnsignedInt
+  blacklist_date DateTime        @db.DateTime(0)
+  ip             String          @db.VarChar(50)
+  archelon_admin archelon_admin? @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_admin_blacklist_admin_id_foreign")
+
+  @@index([admin_id], map: "archelon_admin_blacklist_admin_id_foreign")
+}
+
+model archelon_admin_status {
+  admin_status_id Int              @id @default(autoincrement()) @db.UnsignedInt
+  admin_status    String           @db.VarChar(20)
+  archelon_admin  archelon_admin[]
+}
+
+model archelon_config {
+  config_id               Int       @id @default(autoincrement()) @db.UnsignedInt
+  timeout_minute          Int       @default(15)
+  session_mode            String    @default("EXCLUSIVE") @db.VarChar(255)
+  login_attempt_threshold Int       @default(10)
+  is_maintenance          Boolean   @default(false)
+  created_at              DateTime? @db.Timestamp(0)
+  updated_at              DateTime? @db.Timestamp(0)
+}
+
+model archelon_division {
+  division_id             Int                       @id @default(autoincrement()) @db.UnsignedInt
+  division_name           String                    @db.VarChar(30)
+  archelon_access_control archelon_access_control[]
+}
+
+model archelon_firebase_token {
+  token          String         @id @db.VarChar(255)
+  admin_id       Int            @db.UnsignedInt
+  added_date     DateTime       @db.DateTime(0)
+  archelon_admin archelon_admin @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_firebase_token_admin_id_foreign")
+
+  @@index([admin_id], map: "archelon_firebase_token_admin_id_foreign")
+}
+
+model archelon_language {
+  lang_id              Int                    @id @default(autoincrement()) @db.UnsignedInt
+  lang_code            String                 @db.VarChar(10)
+  language             String                 @db.VarChar(50)
+  currency             String                 @db.VarChar(3)
+  archelon_preferences archelon_preferences[]
+}
+
+model archelon_login_failed_attempt {
+  attempt_id     Int             @id @default(autoincrement()) @db.UnsignedInt
+  admin_id       Int?            @db.UnsignedInt
+  ip_address     String          @db.VarChar(255)
+  user_agent     String          @db.Text
+  attempt_time   DateTime        @db.DateTime(0)
+  archelon_admin archelon_admin? @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_login_failed_attempt_admin_id_foreign")
+
+  @@index([admin_id], map: "archelon_login_failed_attempt_admin_id_foreign")
+}
+
+model archelon_preferences {
+  preferences_id     Int               @id @default(autoincrement()) @db.UnsignedInt
+  admin_id           Int?              @db.UnsignedInt
+  item_per_page      Int               @default(15)
+  color_theme        String            @db.VarChar(255)
+  email_notification Boolean           @default(false)
+  default_language   Int               @default(1) @db.UnsignedInt
+  archelon_admin     archelon_admin?   @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_preferences_admin_id_foreign")
+  archelon_language  archelon_language @relation(fields: [default_language], references: [lang_id], onDelete: Cascade, map: "archelon_preferences_default_language_foreign")
+
+  @@index([admin_id], map: "archelon_preferences_admin_id_foreign")
+  @@index([default_language], map: "archelon_preferences_default_language_foreign")
+}
+
+model archelon_rel_admin_shift {
+  rel_id         Int            @id @default(autoincrement()) @db.UnsignedInt
+  admin_id       Int            @db.UnsignedInt
+  shift_id       Int            @db.UnsignedInt
+  archelon_admin archelon_admin @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_rel_admin_shift_admin_id_foreign")
+  archelon_shift archelon_shift @relation(fields: [shift_id], references: [shift_id], onDelete: Cascade, map: "archelon_rel_admin_shift_shift_id_foreign")
+
+  @@index([admin_id], map: "archelon_rel_admin_shift_admin_id_foreign")
+  @@index([shift_id], map: "archelon_rel_admin_shift_shift_id_foreign")
+}
+
+model archelon_session_token {
+  session_token        String         @id @db.VarChar(26)
+  admin_id             Int            @db.UnsignedInt
+  user_os              String         @db.VarChar(50)
+  user_browser         String         @db.VarChar(50)
+  user_browser_version String         @db.VarChar(50)
+  user_device          String         @db.VarChar(50)
+  access_ip            String         @db.VarChar(50)
+  session_start        DateTime       @db.DateTime(0)
+  last_active          DateTime       @db.DateTime(0)
+  session_expired      DateTime       @db.DateTime(0)
+  archelon_admin       archelon_admin @relation(fields: [admin_id], references: [admin_id], onDelete: Cascade, map: "archelon_session_token_admin_id_foreign")
+
+  @@index([admin_id], map: "archelon_session_token_admin_id_foreign")
+}
+
+model archelon_shift {
+  shift_id                 Int                        @id @default(autoincrement()) @db.UnsignedInt
+  shift_name               String                     @db.VarChar(255)
+  working_hour_start       DateTime                   @db.Time(0)
+  working_hour_end         DateTime                   @db.Time(0)
+  monday                   Int                        @default(1) @db.TinyInt
+  tuesday                  Int                        @default(1) @db.TinyInt
+  wednesday                Int                        @default(1) @db.TinyInt
+  thursday                 Int                        @default(1) @db.TinyInt
+  friday                   Int                        @default(1) @db.TinyInt
+  saturday                 Int                        @default(0) @db.TinyInt
+  sunday                   Int                        @default(0) @db.TinyInt
+  archelon_rel_admin_shift archelon_rel_admin_shift[]
+}
